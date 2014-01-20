@@ -172,8 +172,13 @@ module Puck
 
     def resolve_gem_specs(gem_specs, gem_names)
       gem_names.flat_map do |name|
-        gem_specs[name].flat_map do |spec|
-          [spec, *resolve_gem_specs(gem_specs, spec.dependencies.map(&:name))]
+        if gem_specs[name].nil?
+          puts "skipping #{name}, didn't find a gem_spec for it. Maybe platform specific?"
+          []
+        else
+          gem_specs[name].flat_map do |spec|
+            [spec, *resolve_gem_specs(gem_specs, spec.dependencies.map(&:name))]
+          end
         end
       end
     end
